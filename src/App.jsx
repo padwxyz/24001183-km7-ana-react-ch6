@@ -12,16 +12,15 @@ function App() {
   // store data
   const [shops, setShops] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const listMenu = ["Home", "About", "Logout"];
 
-  console.log(shops);
-
   useEffect(() => {
     const fetchShops = async () => {
+      setLoading(true);
       try {
         const response = await axios.get("http://localhost:3000/api/v1/shops");
-        console.log(response);
 
         const data = response.data;
         if (data.isSuccess) {
@@ -30,15 +29,14 @@ function App() {
           setError("error");
         }
       } catch (error) {
-        setError(error.message)
-        console.log(error.message);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchShops();
   }, []);
-
-  console.log(shops);
 
   return (
     <>
@@ -67,40 +65,39 @@ function App() {
       </header>
 
       <main className="text-center">
-      {/* {loading && <p className></p> } */}
-      {error && <p className="text-red-500">{error}</p> }
-      {!error && (
-        <section className="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {shops.map((shop, index) => (
-            <div
-              key={index}
-              className="p-4 border rounded-md bg-white shadow-md"
-            >
-              <img
-                src={shop.products[0].images[0]}
-                alt={shop.products[0].name}
-                className="w-full h-40 object-cover mb-4"
-              />
-              <h3 className="font-semibold">{shop.products[0].name}</h3>
-              <p className="text-green-500 font-bold">
-                {shop.products[0].price}
-              </p>
-              <p className="text-gray-600 mt-2 text-sm">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </p>
-              <div className="flex items-center justify-between text-gray-500 text-sm mt-4">
-                <span>4 orang</span> <span>Manual</span> <span>Tahun 2020</span>
+        {loading && <p>loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!error && (
+          <section className="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {shops.map((shop, index) => (
+              <div
+                key={index}
+                className="p-4 border rounded-md bg-white shadow-md"
+              >
+                <img
+                  src={shop.products[0].images[0]}
+                  alt={shop.products[0].name}
+                  className="w-full h-40 object-cover mb-4"
+                />
+                <h3 className="font-semibold">{shop.products[0].name}</h3>
+                <p className="text-green-500 font-bold">
+                  {shop.products[0].price}
+                </p>
+                <p className="text-gray-600 mt-2 text-sm">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </p>
+                <div className="flex items-center justify-between text-gray-500 text-sm mt-4">
+                  <span>4 orang</span> <span>Manual</span>{" "}
+                  <span>Tahun 2020</span>
+                </div>
+                <button className="w-full px-4 py-2 mt-4 text-white bg-green-500 rounded-md">
+                  Pilih Mobil
+                </button>
               </div>
-              <button className="w-full px-4 py-2 mt-4 text-white bg-green-500 rounded-md">
-                Pilih Mobil
-              </button>
-            </div>
-          ))}
-        </section>
-      )}
+            ))}
+          </section>
+        )}
       </main>
-
-      
 
       {/* <Navbar />
       <NavbarWithStyling
