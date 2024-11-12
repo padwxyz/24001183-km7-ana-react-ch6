@@ -1,10 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
+import Notification from "../components/Notification/Notification";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [ email, setEmail ]  = useState("");
-  const [ password, setPassword ] = useState("");
-  const [ error, setError ] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [notification, setNotification] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,13 +30,40 @@ function Login() {
         localStorage.setItem("token", token);
         localStorage.setItem("username", username);
       }
+
+      setNotification({
+        type: "success",
+        message: response.data.message || "Successfully login!",
+        description: "Redirect to homepage...",
+      });
+
+      setTimeout(() => {
+        navigate("/");
+        navigate(0);
+      }, 1500);
     } catch (err) {
       console.log(err);
+
+      setNotification({
+        type: "error",
+        message: err.response.data.message || "An error occured",
+        description: "please try again!",
+      });
     }
+
+    setTimeout(() => setNotification(null), 2000);
   };
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      {notification && (
+        <Notification
+          type={notification.type}
+          message={notification.message}
+          description={notification.description}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
           alt="Your Company"
@@ -43,7 +74,6 @@ function Login() {
           Sign in to your account
         </h2>
       </div>
-
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form onSubmit={handleLogin} className="space-y-6">
           <div>

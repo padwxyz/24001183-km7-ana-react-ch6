@@ -19,9 +19,10 @@ function Homepage() {
 
         const response = await axios.get("http://localhost:3000/api/v1/shops", {
           headers: {
-            Authorization: `Bearer $(token)`,
+            Authorization: `Bearer ${token}`,
           },
         });
+
         const data = response.data;
         if (data.isSuccess) {
           setShops(data.data.shops);
@@ -127,7 +128,7 @@ function Homepage() {
                     {shop.products[0].name}
                   </h3>
                   <p className="text-green-500 font-bold">
-                    Price: {shop.products[0].price}
+                    Price: Rp. {shop.products[0].price} /hari
                   </p>
                   <p className="text-gray-600 mt-2 text-sm">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
