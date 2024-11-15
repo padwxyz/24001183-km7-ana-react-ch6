@@ -1,18 +1,32 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import "./App.css";
 import NavbarTailwind from "./components/navbar/NavbarTailwind";
 import Homepage from "./pages/HomePage";
 import Login from "./pages/Login";
 import ErrorPage from "./pages/404";
+import { isTokenExpired } from "../utils/auth";
 
 function App() {
+  const navigate = useNavigate();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      navigate("/login");
+    }
     setIsAuthenticated(!!token);
   }, []);
 
