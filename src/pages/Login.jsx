@@ -1,7 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import Notification from "../components/Notification/Notification";
-import { useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -10,26 +9,13 @@ function Login() {
   const [notification, setNotification] = useState(null);
   const navigate = useNavigate();
 
+  const { login } = useAuth();
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/auth/login",
-        {
-          email,
-          password,
-        }
-      );
-      console.log(response);
-
-      if (response.data.isSuccess) {
-        const token = response.data.data.token;
-        const username = response.data.data.username;
-
-        localStorage.setItem("token", token);
-        localStorage.setItem("username", username);
-      }
+      await login(email, password);
 
       setNotification({
         type: "success",
@@ -38,15 +24,14 @@ function Login() {
       });
 
       setTimeout(() => {
-        navigate("/");
-        navigate(0);
-      }, 1500);
+        setNotification(null);
+      }, 2000);
     } catch (err) {
       console.log(err);
 
       setNotification({
         type: "error",
-        message: err.response.data.message || "An error occured",
+        message: err?.message || "An error occured",
         description: "please try again!",
       });
     }

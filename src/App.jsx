@@ -1,46 +1,18 @@
-import { useEffect, useState } from "react";
-import {
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import "./App.css";
 import NavbarTailwind from "./components/navbar/NavbarTailwind";
 import Homepage from "./pages/HomePage";
 import Login from "./pages/Login";
 import ErrorPage from "./pages/404";
-import { isTokenExpired } from "../utils/auth";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const navigate = useNavigate();
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token || isTokenExpired(token)) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      navigate("/login");
-    }
-    setIsAuthenticated(!!token);
-  }, []);
-
-  const handleLogOut = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    setIsAuthenticated(false);
-  };
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <>
-      {isAuthenticated && location.pathname !== "/login" && (
-        <NavbarTailwind onLogout={handleLogOut} />
-      )}
+      {isAuthenticated && <NavbarTailwind onLogout={handleLogOut} />}
 
       <Routes>
         <Route
